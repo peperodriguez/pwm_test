@@ -2,25 +2,35 @@
 #include "dspic30f3010_pwm.h"
 
 
-void stop_pwm(void)
+void init_pwm(int f)
 {
-	PTCON &= ~0x8000;
+	//Preescalado mínimo que voy a necesitar
+	int pre = PWM_KF/f;
+	
+	if( f < 15 ) return;
+
+	if( 1 > pre )
+		pre = 0;
+	else if( 4 > pre )
+		pre = 1;
+	else if( 16 > pre )
+		pre = 2;
+	else
+		pre = 3;
+
+	PTPER = (FCY/f)/(1<< (pre*2));
+
+	// Independientes y negados
+	PWMCON1 = 0x077;
+	PTCON = 0x8000 | (pre<<2);
+
+	return;
+	
 }
 
-void init_pwm(unsigned int uiPeriodUs)
+void set_dc(int dc)
 {
-	if( 0 == uiPeriodUs ) {
-		return;
-	} 
-	else if( MIN_PWM_PERIOD_US > uiPeriodUs ){
-		uiPeriodUs = MIN_PWM_PERIOD_US;
-	}
-
-    uiPeriodUs = (uiPeriodUs/MIN_PWM_PERIOD_US)*MIN_PWM_PERIOD_US;
-
-	PTCON = 0x0;	// 1:1 prescaler
-					// pwm Modulo disabled
-
-
-	
+	PDC1 = dc*(2*PTPER/100);
+	PDC2 = dc*(2*PTPER/100);
+	PDC3 = dc*(2*PTPER/100);
 }

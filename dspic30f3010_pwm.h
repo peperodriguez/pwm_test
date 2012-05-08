@@ -1,12 +1,11 @@
 #ifndef _DSPIC30F3010_PWM_H_
 #define _DSPIC30F3010_PWM_H_
 
-#define MIN_PWM_PERIOD_US 10
+#include "timer_pwm.h"
 
-void init_pwm(unsigned int uiPeriodUs);
-void set_dc(unsigned int uiDCPercentage);
-void start_pwm(unsigned int uiDCPercentage);
-void stop_pwm(void);
+#define PWM_KF	((FCY)/((2^15)-1))
 
+void init_pwm(int f);
+void set_dc(int dc);
 
 #endif //_DSPIC30F3010_PWM_H_

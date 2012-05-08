@@ -1,16 +1,30 @@
-#include "dspic30f3010.h"
-#include "dspic30f_additional_settings.h"
+#include "p30f3010.h"
 #include "dspic30f3010_pwm.h"
-
+#include "timer_pwm.h"
 
 _FOSC(FRC_PLL16)
 _FWDT(WDT_OFF)
 
+
+
+
 int main(void)
 {
-	//PWM Module Init.
-	// - T = 10 ms
-	// - DC = from 50% to 90% changing 1% every 250ms
-	
-	return 0;
+	int dc = 1;	
+	init_pwm(100);
+	set_dc(dc);
+	init_timer();
+
+	while(1){
+		if( 0 == ms_crono ){
+			dc+=1;
+			if( 100 == dc )
+				dc = 10;
+			set_dc(dc);
+			ms_crono = 250;
+		}
+	}
 }
+
+
+
